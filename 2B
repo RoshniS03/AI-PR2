@@ -1,0 +1,41 @@
+def water_jug_dfs(capacity1, capacity2, target):
+    stack = [(0, 0)]
+    visited = set()
+
+    while stack:
+        jug1, jug2 = stack.pop()
+
+        if (jug1, jug2) in visited:
+            continue
+
+        visited.add((jug1, jug2))
+
+        print("Jug1 =", jug1, " Jug2 =", jug2)
+
+        if jug1 == target or jug2 == target:
+            print("\nTarget Reached!")
+            return
+
+        next_states = [
+            (capacity1, jug2),                  # Fill Jug1
+            (jug1, capacity2),                  # Fill Jug2
+            (0, jug2),                          # Empty Jug1
+            (jug1, 0),                          # Empty Jug2
+            (max(0, jug1 - (capacity2 - jug2)),
+             min(capacity2, jug2 + jug1)),      # Pour Jug1 -> Jug2
+            (min(capacity1, jug1 + jug2),
+             max(0, jug2 - (capacity1 - jug1))) # Pour Jug2 -> Jug1
+        ]
+
+        for state in next_states:
+            if state not in visited:
+                stack.append(state)
+
+    print("\nNo Solution Found!")
+
+# Driver Code
+jug1_capacity = 4
+jug2_capacity = 3
+target = 2
+
+water_jug_dfs(jug1_capacity, jug2_capacity, target)
