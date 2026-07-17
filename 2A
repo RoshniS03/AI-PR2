@@ -1,0 +1,80 @@
+from collections import deque
+
+# Goal State
+goal_state = [1, 2, 3,
+              4, 5, 6,
+              7, 8, 0]
+
+# Function to print puzzle
+def print_state(state):
+    for i in range(0, 9, 3):
+        print(state[i:i+3])
+    print()
+
+# Find blank tile
+def find_blank(state):
+    return state.index(0)
+
+# Generate possible moves
+def get_neighbors(state):
+    neighbors = []
+    blank = find_blank(state)
+
+    moves = {
+        "Up": -3,
+        "Down": 3,
+        "Left": -1,
+        "Right": 1
+    }
+
+    for move, change in moves.items():
+        new_blank = blank + change
+
+        if move == "Up" and blank < 3:
+            continue
+        if move == "Down" and blank > 5:
+            continue
+        if move == "Left" and blank % 3 == 0:
+            continue
+        if move == "Right" and blank % 3 == 2:
+            continue
+
+        new_state = state[:]
+        new_state[blank], new_state[new_blank] = new_state[new_blank], new_state[blank]
+        neighbors.append(new_state)
+
+    return neighbors
+
+# Breadth First Search
+def bfs(initial_state):
+    queue = deque([(initial_state, [])])
+    visited = []
+
+    while queue:
+        state, path = queue.popleft()
+
+        if state == goal_state:
+            return path + [state]
+
+        if state not in visited:
+            visited.append(state)
+
+            for neighbor in get_neighbors(state):
+                if neighbor not in visited:
+                    queue.append((neighbor, path + [state]))
+
+    return None
+
+# Initial State
+initial_state = [1, 2, 3,
+                 4, 0, 6,
+                 7, 5, 8]
+
+solution = bfs(initial_state)
+
+if solution:
+    print("Solution Found:\n")
+    for step in solution:
+        print_state(step)
+else:
+    print("No Solution Found")
